@@ -19,7 +19,7 @@ namespace SimpleCourseManagerApi
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddScoped<ICourseService, CourseService>();
-            builder.Services.AddScoped<IValidator<CourseValidatorResult, CourseRequest>, CourseValidator>();
+            builder.Services.AddScoped<IValidator<CourseValidatorResult, CourseRequestDto>, CourseValidator>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

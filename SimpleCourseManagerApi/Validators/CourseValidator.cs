@@ -10,8 +10,8 @@ namespace SimpleCourseManagerApi.Validators
         public IList<Error> Errors { get; set; } = new List<Error>();
     }
 
-    public class CourseValidator:IValidator<CourseValidatorResult,CourseRequest> { 
-        public CourseValidatorResult IsValid(CourseRequest course)
+    public class CourseValidator:IValidator<CourseValidatorResult,CourseRequestDto> { 
+        public CourseValidatorResult IsValid(CourseRequestDto course)
         {
             IList<Error> errors = new List<Error>();
             if (course.Name is null || course.Name.Length < 3)

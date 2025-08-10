@@ -1,26 +1,33 @@
 ﻿using SimpleCourseManagerApi.Dtos.Request;
+using SimpleCourseManagerApi.Dtos.Response;
 using SimpleCourseManagerApi.Interfaces;
 using SimpleCourseManagerApi.Models;
 using SimpleCourseManagerApi.Utils;
 using SimpleCourseManagerApi.Validators;
+using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 
 namespace SimpleCourseManagerApi.Services
 {
     public class CourseService : ICourseService
     {
         public static IList<Course> _courses= new List<Course>();
-        private readonly IValidator<CourseValidatorResult, CourseRequest> validator;
+        private readonly IValidator<CourseValidatorResult, CourseRequestDto> validator;
 
-        public CourseService(IValidator<CourseValidatorResult, CourseRequest> validator)
+        public CourseService(IValidator<CourseValidatorResult, CourseRequestDto> validator)
         {
             this.validator = validator;
         }
-        public (bool success,Course? data,IList<Error>? errors) CreateCourse(CourseRequest courseDto)
+        public CourseResponseDto CreateCourse(CourseRequestDto courseDto)
         {
             var result = validator.IsValid(courseDto);
             if (!result.IsValid)
             {
-                return (result.IsValid, null,result.Errors);
+                return new CourseResponseDto()
+                {
+                    Success = false,
+                    Errors = result.Errors.ToList()
+                };
             }
             int maxId;
             if (_courses.Count == 0) maxId = 0;
@@ -33,7 +40,11 @@ namespace SimpleCourseManagerApi.Services
                 Price = courseDto.Price,
             };
             _courses.Add(course);
-            return (result.IsValid,course,null);
+            return new CourseResponseDto()
+            {
+                Success = true,
+                Data = course
+            };
         }
 
         public bool DeleteCourse(int id)
@@ -46,24 +57,35 @@ namespace SimpleCourseManagerApi.Services
             return true;
         }
 
-        public (bool success, IList<Error>? errors) EditCourse(int id, CourseRequest courseDto)
+        public CourseResponseDto EditCourse(int id, CourseRequestDto courseDto)
         {
             var course = _courses.FirstOrDefault(c => c.Id == id);
             if (course is null)
             {
-                return (false,null);
+                return new CourseResponseDto()
+                {
+                    Success = false,
+                    Errors = new List<Error>() { new Error() { Field = "course", Message = "Course not found" } }
+                };
             }
             var result = validator.IsValid(courseDto);
             if (!result.IsValid)
             {
-                return (result.IsValid, result.Errors);
+                return new CourseResponseDto()
+                {
+                    Success = false,
+                    Errors =result.Errors.ToList()
+                };
             }
             course.Name = courseDto.Name;
             course.Description = courseDto.Description;
             course.Subject = courseDto.Subject;
             course.Price = courseDto.Price;
 
-            return (result.IsValid,null);
+            return new CourseResponseDto()
+            {
+                Success = true
+            };
         }
 
         public IList<Course> GetAllCourses()

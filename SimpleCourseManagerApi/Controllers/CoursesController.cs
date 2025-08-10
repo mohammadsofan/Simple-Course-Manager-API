@@ -27,14 +27,14 @@ namespace SimpleCourseManagerApi.Controllers
             return Ok(new {Course = course});
         }
         [HttpPost]
-        public IActionResult CreateCourse([FromBody] CourseRequest courseRequest)
+        public IActionResult CreateCourse([FromBody] CourseRequestDto courseRequest)
         {
             var result = _courseService.CreateCourse(courseRequest);
-            if(!result.success)
+            if(!result.Success)
             {
-                return BadRequest(new {Errors = result.errors});
+                return BadRequest(new {Errors = result.Errors});
             }
-            return CreatedAtAction(nameof(GetOnebyId), new { id = result.data?.Id }, result.data);
+            return CreatedAtAction(nameof(GetOnebyId), new { id = result.Data?.Id }, result.Data);
         }
         [HttpDelete("{id}")]
         public IActionResult DeleteCourse([FromRoute] int id)
@@ -44,16 +44,16 @@ namespace SimpleCourseManagerApi.Controllers
             return NoContent();
         }
         [HttpPut("{id}")]
-        public IActionResult UpdateCourse([FromRoute] int id, CourseRequest courseRequest)
+        public IActionResult UpdateCourse([FromRoute] int id, CourseRequestDto courseRequest)
         {
             var result = _courseService.EditCourse(id, courseRequest);
-            if(!result.success && result.errors is null)
+            if(!result.Success && result.Errors is null)
             {
                 return NotFound();
             }
-            else if(!result.success && result.errors is not null)
+            else if(!result.Success && result.Errors is not null)
             {
-                return BadRequest(new { Errors = result.errors });
+                return BadRequest(new { Errors = result.Errors });
             }
 
             return NoContent();

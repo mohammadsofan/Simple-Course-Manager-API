@@ -1,6 +1,0 @@
-@SimpleCourseManagerApi_HostAddress = http://localhost:5182
-
-GET {{SimpleCourseManagerApi_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
